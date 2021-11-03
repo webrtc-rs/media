@@ -1,6 +1,6 @@
 use super::seqnum_distance;
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 pub(crate) enum Comparison {
     Void,
     Before,

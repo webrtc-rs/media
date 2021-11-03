@@ -1,3 +1,8 @@
+#[cfg(test)]
+mod sample_builder_test;
+#[cfg(test)]
+mod sample_sequence_location_test;
+
 pub mod sample_sequence_location;
 
 use std::time::{Duration, SystemTime};
