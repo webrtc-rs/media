@@ -64,6 +64,12 @@ impl<T: Depacketizer> SampleBuilder<T> {
         }
     }
 
+    pub fn with_max_time_delay(mut self, max_late_duration: Duration) -> Self {
+        self.max_late_timestamp =
+            (self.sample_rate as u128 * max_late_duration.as_millis() / 1000) as u32;
+        self
+    }
+
     fn too_old(&self, location: &SampleSequenceLocation) -> bool {
         if self.max_late_timestamp == 0 {
             return false;
