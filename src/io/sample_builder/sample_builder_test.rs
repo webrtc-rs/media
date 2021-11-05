@@ -1,4 +1,3 @@
-
 use rtp::packetizer::Depacketizer;
 
 use super::*;
@@ -50,7 +49,7 @@ impl Depacketizer for FakeDepacketizer {
 
     /// Checks if the packet is at the end of a partition.  This should
     /// return false if the result could not be determined.
-    fn is_partition_tail(&self, marker: bool, payload: &Bytes) -> bool {
+    fn is_partition_tail(&self, marker: bool, _payload: &Bytes) -> bool {
         return marker;
     }
 }
@@ -112,7 +111,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Second packet
                 header: rtp::header::Header {
                     sequence_number: 5001,
-                    timestamp: 6, 
+                    timestamp: 6,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -121,7 +120,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5002,
-                    timestamp: 7, 
+                    timestamp: 7,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -135,7 +134,7 @@ pub fn test_sample_builder() {
             },
             Sample { // Second sample
                 data: bytes!(2u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 6,
                 ..Default::default()
             }]),
@@ -150,7 +149,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 5, 
+                    timestamp: 5,
                     marker: true,
                     ..Default::default()
                 },
@@ -160,7 +159,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Second packet
                 header: rtp::header::Header {
                     sequence_number: 5002,
-                    timestamp: 7, 
+                    timestamp: 7,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -169,7 +168,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5004,
-                    timestamp: 9, 
+                    timestamp: 9,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -178,7 +177,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fourth packet
                 header: rtp::header::Header {
                     sequence_number: 5006,
-                    timestamp: 11, 
+                    timestamp: 11,
                     ..Default::default()
                 },
                 payload: bytes!(4u8),
@@ -187,7 +186,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fifth packet
                 header: rtp::header::Header {
                     sequence_number: 5008,
-                    timestamp: 13, 
+                    timestamp: 13,
                     ..Default::default()
                 },
                 payload: bytes!(5u8),
@@ -196,7 +195,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Sixth packet
                 header: rtp::header::Header {
                     sequence_number: 5010,
-                    timestamp: 15, 
+                    timestamp: 15,
                     ..Default::default()
                 },
                 payload: bytes!(6u8),
@@ -205,7 +204,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Seventh packet
                 header: rtp::header::Header {
                     sequence_number: 5012,
-                    timestamp: 17, 
+                    timestamp: 17,
                     ..Default::default()
                 },
                 payload: bytes!(7u8),
@@ -213,7 +212,7 @@ pub fn test_sample_builder() {
             }]),
             samples: Vec::from([Sample { // First sample
                 data: bytes!(1u8),
-                duration: Duration::from_secs(2), 
+                duration: Duration::from_secs(2),
                 packet_timestamp: 5,
                 ..Default::default()
             }]),
@@ -237,7 +236,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Second packet
                 header: rtp::header::Header {
                     sequence_number: 5002,
-                    timestamp: 7, 
+                    timestamp: 7,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -246,7 +245,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5004,
-                    timestamp: 9, 
+                    timestamp: 9,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -255,7 +254,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fourth packet
                 header: rtp::header::Header {
                     sequence_number: 5006,
-                    timestamp: 11, 
+                    timestamp: 11,
                     ..Default::default()
                 },
                 payload: bytes!(4u8),
@@ -264,7 +263,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fifth packet
                 header: rtp::header::Header {
                     sequence_number: 5008,
-                    timestamp: 13, 
+                    timestamp: 13,
                     ..Default::default()
                 },
                 payload: bytes!(5u8),
@@ -273,7 +272,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Sixth packet
                 header: rtp::header::Header {
                     sequence_number: 5010,
-                    timestamp: 15, 
+                    timestamp: 15,
                     ..Default::default()
                 },
                 payload: bytes!(6u8),
@@ -282,7 +281,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Seventh packet
                 header: rtp::header::Header {
                     sequence_number: 5012,
-                    timestamp: 17, 
+                    timestamp: 17,
                     ..Default::default()
                 },
                 payload: bytes!(7u8),
@@ -300,7 +299,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 5, 
+                    timestamp: 5,
                     marker: true,
                     ..Default::default()
                 },
@@ -311,7 +310,7 @@ pub fn test_sample_builder() {
                 header: rtp::header::Header {
                     sequence_number: 5002,
                     timestamp: 7,
-                    marker: true, 
+                    marker: true,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -320,7 +319,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5004,
-                    timestamp: 9, 
+                    timestamp: 9,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -329,7 +328,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fourth packet
                 header: rtp::header::Header {
                     sequence_number: 5006,
-                    timestamp: 11, 
+                    timestamp: 11,
                     ..Default::default()
                 },
                 payload: bytes!(4u8),
@@ -338,7 +337,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fifth packet
                 header: rtp::header::Header {
                     sequence_number: 5008,
-                    timestamp: 13, 
+                    timestamp: 13,
                     ..Default::default()
                 },
                 payload: bytes!(5u8),
@@ -347,7 +346,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Sixth packet
                 header: rtp::header::Header {
                     sequence_number: 5010,
-                    timestamp: 15, 
+                    timestamp: 15,
                     ..Default::default()
                 },
                 payload: bytes!(6u8),
@@ -356,7 +355,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Seventh packet
                 header: rtp::header::Header {
                     sequence_number: 5012,
-                    timestamp: 17, 
+                    timestamp: 17,
                     ..Default::default()
                 },
                 payload: bytes!(7u8),
@@ -364,13 +363,13 @@ pub fn test_sample_builder() {
             }]),
             samples: Vec::from([Sample { // First (dropped) sample
                 data: bytes!(1u8),
-                duration: Duration::from_secs(2), 
+                duration: Duration::from_secs(2),
                 packet_timestamp: 5,
                 ..Default::default()
             },
             Sample { // First correct sample
                 data: bytes!(2u8),
-                duration: Duration::from_secs(2), 
+                duration: Duration::from_secs(2),
                 packet_timestamp: 7,
                 prev_dropped_packets: 1,
                 ..Default::default()
@@ -386,7 +385,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 5, 
+                    timestamp: 5,
                     marker: true,
                     ..Default::default()
                 },
@@ -397,7 +396,7 @@ pub fn test_sample_builder() {
                 header: rtp::header::Header {
                     sequence_number: 5001,
                     timestamp: 6,
-                    marker: true, 
+                    marker: true,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -406,7 +405,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5002,
-                    timestamp: 6, 
+                    timestamp: 6,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -415,7 +414,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fourth packet
                 header: rtp::header::Header {
                     sequence_number: 5003,
-                    timestamp: 7, 
+                    timestamp: 7,
                     ..Default::default()
                 },
                 payload: bytes!(4u8),
@@ -423,13 +422,13 @@ pub fn test_sample_builder() {
             }]),
             samples: Vec::from([Sample { // First sample
                 data: bytes!(1u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 5,
                 ..Default::default()
             },
             Sample { // Second (duplicate) correct sample
                 data: bytes!(2u8, 2u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 6,
                 ..Default::default()
             }]),
@@ -444,7 +443,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 5, 
+                    timestamp: 5,
                     marker: true,
                     ..Default::default()
                 },
@@ -455,7 +454,7 @@ pub fn test_sample_builder() {
                 header: rtp::header::Header {
                     sequence_number: 5007,
                     timestamp: 6,
-                    marker: true, 
+                    marker: true,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -464,7 +463,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5008,
-                    timestamp: 7, 
+                    timestamp: 7,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -482,7 +481,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 5, 
+                    timestamp: 5,
                     marker: true,
                     ..Default::default()
                 },
@@ -493,7 +492,7 @@ pub fn test_sample_builder() {
                 header: rtp::header::Header {
                     sequence_number: 5007,
                     timestamp: 6,
-                    marker: true, 
+                    marker: true,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -502,7 +501,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5008,
-                    timestamp: 7, 
+                    timestamp: 7,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -522,7 +521,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 5, 
+                    timestamp: 5,
                     marker: true,
                     ..Default::default()
                 },
@@ -533,7 +532,7 @@ pub fn test_sample_builder() {
                 header: rtp::header::Header {
                     sequence_number: 5007,
                     timestamp: 6,
-                    marker: true, 
+                    marker: true,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -542,7 +541,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5008,
-                    timestamp: 7, 
+                    timestamp: 7,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -562,7 +561,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 1, 
+                    timestamp: 1,
                     ..Default::default()
                 },
                 payload: bytes!(1u8),
@@ -571,7 +570,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Second packet
                 header: rtp::header::Header {
                     sequence_number: 5001,
-                    timestamp: 2, 
+                    timestamp: 2,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -580,7 +579,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5002,
-                    timestamp: 3, 
+                    timestamp: 3,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -589,7 +588,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fourth packet
                 header: rtp::header::Header {
                     sequence_number: 5003,
-                    timestamp: 4, 
+                    timestamp: 4,
                     ..Default::default()
                 },
                 payload: bytes!(4u8),
@@ -598,7 +597,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fifth packet
                 header: rtp::header::Header {
                     sequence_number: 5004,
-                    timestamp: 5, 
+                    timestamp: 5,
                     ..Default::default()
                 },
                 payload: bytes!(5u8),
@@ -607,7 +606,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Sixth packet
                 header: rtp::header::Header {
                     sequence_number: 5005,
-                    timestamp: 6, 
+                    timestamp: 6,
                     ..Default::default()
                 },
                 payload: bytes!(6u8),
@@ -615,31 +614,31 @@ pub fn test_sample_builder() {
             }]),
             samples: Vec::from([Sample { // First sample
                 data: bytes!(1u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 1,
                 ..Default::default()
             },
             Sample { // Second sample
                 data: bytes!(2u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 2,
                 ..Default::default()
             },
             Sample { // Third sample
                 data: bytes!(3u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 3,
                 ..Default::default()
             },
             Sample { // Fourth sample
                 data: bytes!(4u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 4,
                 ..Default::default()
             },
             Sample { // Fifth sample
                 data: bytes!(5u8),
-                duration: Duration::from_secs(1), 
+                duration: Duration::from_secs(1),
                 packet_timestamp: 5,
                 ..Default::default()
             },]),
@@ -654,7 +653,7 @@ pub fn test_sample_builder() {
             packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
                 header: rtp::header::Header {
                     sequence_number: 5000,
-                    timestamp: 1, 
+                    timestamp: 1,
                     ..Default::default()
                 },
                 payload: bytes!(1u8),
@@ -663,7 +662,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Second packet
                 header: rtp::header::Header {
                     sequence_number: 5001,
-                    timestamp: 2, 
+                    timestamp: 2,
                     ..Default::default()
                 },
                 payload: bytes!(2u8),
@@ -672,7 +671,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Third packet
                 header: rtp::header::Header {
                     sequence_number: 5002,
-                    timestamp: 3, 
+                    timestamp: 3,
                     ..Default::default()
                 },
                 payload: bytes!(3u8),
@@ -681,7 +680,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fourth packet
                 header: rtp::header::Header {
                     sequence_number: 5013,
-                    timestamp: 4000, 
+                    timestamp: 4000,
                     ..Default::default()
                 },
                 payload: bytes!(4u8),
@@ -690,7 +689,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Fifth packet
                 header: rtp::header::Header {
                     sequence_number: 5014,
-                    timestamp: 4000, 
+                    timestamp: 4000,
                     ..Default::default()
                 },
                 payload: bytes!(5u8),
@@ -699,7 +698,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Sixth packet
                 header: rtp::header::Header {
                     sequence_number: 5015,
-                    timestamp: 4002, 
+                    timestamp: 4002,
                     ..Default::default()
                 },
                 payload: bytes!(6u8),
@@ -708,7 +707,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Seventh packet
                 header: rtp::header::Header {
                     sequence_number: 5016,
-                    timestamp: 7000, 
+                    timestamp: 7000,
                     ..Default::default()
                 },
                 payload: bytes!(4u8),
@@ -717,7 +716,7 @@ pub fn test_sample_builder() {
             rtp::packet::Packet { // Eigth packet
                 header: rtp::header::Header {
                     sequence_number: 5017,
-                    timestamp: 7001, 
+                    timestamp: 7001,
                     ..Default::default()
                 },
                 payload: bytes!(5u8),
@@ -725,7 +724,7 @@ pub fn test_sample_builder() {
             }]),
             samples: Vec::from([Sample { // First sample
                 data: bytes!(4u8, 5u8),
-                duration: Duration::from_secs(2), 
+                duration: Duration::from_secs(2),
                 packet_timestamp: 4000,
                 prev_dropped_packets: 13,
                 ..Default::default()
@@ -736,7 +735,7 @@ pub fn test_sample_builder() {
             max_late_timestamp: Duration::from_secs(2000),
             ..Default::default()
         },
-        
+
     ]);
 
     for t in test_data {
@@ -767,5 +766,5 @@ pub fn test_sample_builder() {
 
         // Current problem: Sample does not implement Eq. Either implement myself or find another way of comparison. (Derive does not work)
         assert_eq!(t.samples, samples, "{}", t.message);
-    };
+    }
 }
