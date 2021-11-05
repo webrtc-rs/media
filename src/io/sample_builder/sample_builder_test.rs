@@ -847,3 +847,118 @@ pub fn test_sample_builder() {
         assert_eq!(t.samples, samples, "{}", t.message);
     }
 }
+
+// SampleBuilder should respect maxLate if we popped successfully but then have a gap larger then maxLate
+#[test]
+fn test_sample_builder_max_late() {
+    let mut s = SampleBuilder::new(
+        50,
+        FakeDepacketizer {
+            head_bytes: vec![],
+            head_checker: false,
+        },
+        1,
+    );
+
+    s.push(Packet {
+        header: Header {
+            sequence_number: 0,
+            timestamp: 1,
+            ..Default::default()
+        },
+        payload: bytes!(0x01),
+    });
+    s.push(Packet {
+        header: Header {
+            sequence_number: 1,
+            timestamp: 2,
+            ..Default::default()
+        },
+        payload: bytes!(0x01),
+    });
+    s.push(Packet {
+        header: Header {
+            sequence_number: 2,
+            timestamp: 3,
+            ..Default::default()
+        },
+        payload: bytes!(0x01),
+    });
+    assert_eq!(
+        Some(Sample {
+            data: bytes!(0x01),
+            duration: Duration::from_secs(1),
+            packet_timestamp: 1,
+            ..Default::default()
+        }),
+        s.pop(),
+        "Failed to build samples before gap"
+    );
+
+    s.push(Packet {
+        header: Header {
+            sequence_number: 5000,
+            timestamp: 500,
+            ..Default::default()
+        },
+        payload: bytes!(0x02),
+    });
+    s.push(Packet {
+        header: Header {
+            sequence_number: 5001,
+            timestamp: 501,
+            ..Default::default()
+        },
+        payload: bytes!(0x02),
+    });
+    s.push(Packet {
+        header: Header {
+            sequence_number: 5002,
+            timestamp: 502,
+            ..Default::default()
+        },
+        payload: bytes!(0x02),
+    });
+
+    assert_eq!(
+        Some(Sample {
+            data: bytes!(0x01),
+            duration: Duration::from_secs(1),
+            packet_timestamp: 2,
+            ..Default::default()
+        }),
+        s.pop(),
+        "Failed to build samples after large gap"
+    );
+    assert_eq!(None, s.pop(), "Failed to build samples after large gap");
+
+    s.push(Packet {
+        header: Header {
+            sequence_number: 6000,
+            timestamp: 600,
+            ..Default::default()
+        },
+        payload: bytes!(0x03),
+    });
+    assert_eq!(
+        Some(Sample {
+            data: bytes!(0x02),
+            duration: Duration::from_secs(1),
+            packet_timestamp: 500,
+            prev_dropped_packets: 4998,
+            ..Default::default()
+        }),
+        s.pop(),
+        "Failed to build samples after large gap"
+    );
+    assert_eq!(
+        Some(Sample {
+            data: bytes!(0x02),
+            duration: Duration::from_secs(1),
+            packet_timestamp: 501,
+            ..Default::default()
+        }),
+        s.pop(),
+        "Failed to build samples after large gap"
+    );
+}
