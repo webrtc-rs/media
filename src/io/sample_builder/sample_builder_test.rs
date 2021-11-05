@@ -1,4 +1,4 @@
-use rtp::packetizer::Depacketizer;
+use rtp::{header::Header, packet::Packet, packetizer::Depacketizer};
 
 use super::*;
 
@@ -12,7 +12,7 @@ macro_rules! bytes {
 #[derive(Default)]
 pub struct SampleBuilderTest {
     message: String,
-    packets: Vec<rtp::packet::Packet>,
+    packets: Vec<Packet>,
     with_head_checker: bool,
     head_bytes: Vec<bytes::Bytes>,
     samples: Vec<Sample>,
@@ -57,31 +57,29 @@ impl Depacketizer for FakeDepacketizer {
 // .go uses testing.T as parameter, have to look into that
 #[test]
 pub fn test_sample_builder() {
-    let test_data: Vec<SampleBuilderTest> = Vec::from([
+    let test_data: Vec<SampleBuilderTest> = vec![
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder shouldn't emit anything if only one RTP packet has been pushed",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet {
-                header: rtp::header::Header {
+            #[rustfmt::skip]
+            message: "Sample builder shouldn't emit anything if only one RTP packet has been pushed".into(),
+            packets: vec![Packet {
+                header: Header {
                     sequence_number: 5000,
                     timestamp: 5,
                     ..Default::default()
                 },
                 payload: bytes!(1u8),
                 ..Default::default()
-            }]),
-            samples: Vec::from([]),
+            }],
+            samples: vec![],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder shouldn't emit anything if only one RTP packet has been pushed even if the marker bit is set",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet {
-                header: rtp::header::Header {
+            #[rustfmt::skip]
+            message: "Sample builder shouldn't emit anything if only one RTP packet has been pushed even if the marker bit is set".into(),
+            packets: vec![Packet {
+                header: Header {
                     sequence_number: 5000,
                     timestamp: 5,
                     marker: true,
@@ -89,654 +87,735 @@ pub fn test_sample_builder() {
                 },
                 payload: bytes!(1u8),
                 ..Default::default()
-            }]),
-            samples: Vec::from([]),
+            }],
+            samples: vec![],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder should emit two packets, we had three packets with unique timestamps",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
+            #[rustfmt::skip]
+            message: "Sample builder should emit two packets, we had three packets with unique timestamps".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5001,
-                    timestamp: 6,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5001,
+                        timestamp: 6,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5002,
-                    timestamp: 7,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5002,
+                        timestamp: 7,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([Sample { // First sample
-                data: bytes!(1u8),
-                duration: Duration::from_secs(1), // technically this is the default value, but since it was in .go source....
-                packet_timestamp: 5,
-                ..Default::default()
-            },
-            Sample { // Second sample
-                data: bytes!(2u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 6,
-                ..Default::default()
-            }]),
+            ],
+            samples: vec![
+                Sample {
+                    // First sample
+                    data: bytes!(1u8),
+                    duration: Duration::from_secs(1), // technically this is the default value, but since it was in .go source....
+                    packet_timestamp: 5,
+                    ..Default::default()
+                },
+                Sample {
+                    // Second sample
+                    data: bytes!(2u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 6,
+                    ..Default::default()
+                },
+            ],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder should emit one packet, we had a packet end of sequence marker and run out of space",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
-                    marker: true,
+            #[rustfmt::skip]
+            message: "Sample builder should emit one packet, we had a packet end of sequence marker and run out of space".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5002,
-                    timestamp: 7,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5002,
+                        timestamp: 7,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5004,
-                    timestamp: 9,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5004,
+                        timestamp: 9,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fourth packet
-                header: rtp::header::Header {
-                    sequence_number: 5006,
-                    timestamp: 11,
+                Packet {
+                    // Fourth packet
+                    header: Header {
+                        sequence_number: 5006,
+                        timestamp: 11,
+                        ..Default::default()
+                    },
+                    payload: bytes!(4u8),
                     ..Default::default()
                 },
-                payload: bytes!(4u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fifth packet
-                header: rtp::header::Header {
-                    sequence_number: 5008,
-                    timestamp: 13,
+                Packet {
+                    // Fifth packet
+                    header: Header {
+                        sequence_number: 5008,
+                        timestamp: 13,
+                        ..Default::default()
+                    },
+                    payload: bytes!(5u8),
                     ..Default::default()
                 },
-                payload: bytes!(5u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Sixth packet
-                header: rtp::header::Header {
-                    sequence_number: 5010,
-                    timestamp: 15,
+                Packet {
+                    // Sixth packet
+                    header: Header {
+                        sequence_number: 5010,
+                        timestamp: 15,
+                        ..Default::default()
+                    },
+                    payload: bytes!(6u8),
                     ..Default::default()
                 },
-                payload: bytes!(6u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Seventh packet
-                header: rtp::header::Header {
-                    sequence_number: 5012,
-                    timestamp: 17,
+                Packet {
+                    // Seventh packet
+                    header: Header {
+                        sequence_number: 5012,
+                        timestamp: 17,
+                        ..Default::default()
+                    },
+                    payload: bytes!(7u8),
                     ..Default::default()
                 },
-                payload: bytes!(7u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([Sample { // First sample
+            ],
+            samples: vec![Sample {
+                // First sample
                 data: bytes!(1u8),
                 duration: Duration::from_secs(2),
                 packet_timestamp: 5,
                 ..Default::default()
-            }]),
+            }],
             max_late: 5,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder shouldn't emit any packet, we do not have a valid end of sequence and run out of space",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
+            #[rustfmt::skip]
+            message: "Sample builder shouldn't emit any packet, we do not have a valid end of sequence and run out of space".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5002,
-                    timestamp: 7,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5002,
+                        timestamp: 7,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5004,
-                    timestamp: 9,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5004,
+                        timestamp: 9,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fourth packet
-                header: rtp::header::Header {
-                    sequence_number: 5006,
-                    timestamp: 11,
+                Packet {
+                    // Fourth packet
+                    header: Header {
+                        sequence_number: 5006,
+                        timestamp: 11,
+                        ..Default::default()
+                    },
+                    payload: bytes!(4u8),
                     ..Default::default()
                 },
-                payload: bytes!(4u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fifth packet
-                header: rtp::header::Header {
-                    sequence_number: 5008,
-                    timestamp: 13,
+                Packet {
+                    // Fifth packet
+                    header: Header {
+                        sequence_number: 5008,
+                        timestamp: 13,
+                        ..Default::default()
+                    },
+                    payload: bytes!(5u8),
                     ..Default::default()
                 },
-                payload: bytes!(5u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Sixth packet
-                header: rtp::header::Header {
-                    sequence_number: 5010,
-                    timestamp: 15,
+                Packet {
+                    // Sixth packet
+                    header: Header {
+                        sequence_number: 5010,
+                        timestamp: 15,
+                        ..Default::default()
+                    },
+                    payload: bytes!(6u8),
                     ..Default::default()
                 },
-                payload: bytes!(6u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Seventh packet
-                header: rtp::header::Header {
-                    sequence_number: 5012,
-                    timestamp: 17,
+                Packet {
+                    // Seventh packet
+                    header: Header {
+                        sequence_number: 5012,
+                        timestamp: 17,
+                        ..Default::default()
+                    },
+                    payload: bytes!(7u8),
                     ..Default::default()
                 },
-                payload: bytes!(7u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([]),
+            ],
+            samples: vec![],
             max_late: 5,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder should emit one packet, we had a packet end of sequence marker and run out of space",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
-                    marker: true,
+            #[rustfmt::skip]
+            message: "Sample builder should emit one packet, we had a packet end of sequence marker and run out of space".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5002,
-                    timestamp: 7,
-                    marker: true,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5002,
+                        timestamp: 7,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5004,
-                    timestamp: 9,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5004,
+                        timestamp: 9,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fourth packet
-                header: rtp::header::Header {
-                    sequence_number: 5006,
-                    timestamp: 11,
+                Packet {
+                    // Fourth packet
+                    header: Header {
+                        sequence_number: 5006,
+                        timestamp: 11,
+                        ..Default::default()
+                    },
+                    payload: bytes!(4u8),
                     ..Default::default()
                 },
-                payload: bytes!(4u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fifth packet
-                header: rtp::header::Header {
-                    sequence_number: 5008,
-                    timestamp: 13,
+                Packet {
+                    // Fifth packet
+                    header: Header {
+                        sequence_number: 5008,
+                        timestamp: 13,
+                        ..Default::default()
+                    },
+                    payload: bytes!(5u8),
                     ..Default::default()
                 },
-                payload: bytes!(5u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Sixth packet
-                header: rtp::header::Header {
-                    sequence_number: 5010,
-                    timestamp: 15,
+                Packet {
+                    // Sixth packet
+                    header: Header {
+                        sequence_number: 5010,
+                        timestamp: 15,
+                        ..Default::default()
+                    },
+                    payload: bytes!(6u8),
                     ..Default::default()
                 },
-                payload: bytes!(6u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Seventh packet
-                header: rtp::header::Header {
-                    sequence_number: 5012,
-                    timestamp: 17,
+                Packet {
+                    // Seventh packet
+                    header: Header {
+                        sequence_number: 5012,
+                        timestamp: 17,
+                        ..Default::default()
+                    },
+                    payload: bytes!(7u8),
                     ..Default::default()
                 },
-                payload: bytes!(7u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([Sample { // First (dropped) sample
-                data: bytes!(1u8),
-                duration: Duration::from_secs(2),
-                packet_timestamp: 5,
-                ..Default::default()
-            },
-            Sample { // First correct sample
-                data: bytes!(2u8),
-                duration: Duration::from_secs(2),
-                packet_timestamp: 7,
-                prev_dropped_packets: 1,
-                ..Default::default()
-            }]),
+            ],
+            samples: vec![
+                Sample {
+                    // First (dropped) sample
+                    data: bytes!(1u8),
+                    duration: Duration::from_secs(2),
+                    packet_timestamp: 5,
+                    ..Default::default()
+                },
+                Sample {
+                    // First correct sample
+                    data: bytes!(2u8),
+                    duration: Duration::from_secs(2),
+                    packet_timestamp: 7,
+                    prev_dropped_packets: 1,
+                    ..Default::default()
+                },
+            ],
             max_late: 5,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder should emit one packet, we had two packets but with duplicate timestamps",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
-                    marker: true,
+            #[rustfmt::skip]
+            message: "Sample builder should emit one packet, we had two packets but with duplicate timestamps".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5001,
-                    timestamp: 6,
-                    marker: true,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5001,
+                        timestamp: 6,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5002,
-                    timestamp: 6,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5002,
+                        timestamp: 6,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fourth packet
-                header: rtp::header::Header {
-                    sequence_number: 5003,
-                    timestamp: 7,
+                Packet {
+                    // Fourth packet
+                    header: Header {
+                        sequence_number: 5003,
+                        timestamp: 7,
+                        ..Default::default()
+                    },
+                    payload: bytes!(4u8),
                     ..Default::default()
                 },
-                payload: bytes!(4u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([Sample { // First sample
-                data: bytes!(1u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 5,
-                ..Default::default()
-            },
-            Sample { // Second (duplicate) correct sample
-                data: bytes!(2u8, 2u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 6,
-                ..Default::default()
-            }]),
+            ],
+            samples: vec![
+                Sample {
+                    // First sample
+                    data: bytes!(1u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 5,
+                    ..Default::default()
+                },
+                Sample {
+                    // Second (duplicate) correct sample
+                    data: bytes!(2u8, 2u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 6,
+                    ..Default::default()
+                },
+            ],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder shouldn't emit a packet because we have a gap before a valid one",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
-                    marker: true,
+            #[rustfmt::skip]
+            message: "Sample builder shouldn't emit a packet because we have a gap before a valid one".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5007,
-                    timestamp: 6,
-                    marker: true,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5007,
+                        timestamp: 6,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5008,
-                    timestamp: 7,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5008,
+                        timestamp: 7,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([]),
+            ],
+            samples: vec![],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder shouldn't emit a packet after a gap as there are gaps and have not reached maxLate yet",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
-                    marker: true,
+            #[rustfmt::skip]
+            message: "Sample builder shouldn't emit a packet after a gap as there are gaps and have not reached maxLate yet".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5007,
-                    timestamp: 6,
-                    marker: true,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5007,
+                        timestamp: 6,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5008,
-                    timestamp: 7,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5008,
+                        timestamp: 7,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            }]),
+            ],
             with_head_checker: true,
-            head_bytes: Vec::from([bytes!(2u8)]),
-            samples: Vec::from([]),
+            head_bytes: vec![bytes!(2u8)],
+            samples: vec![],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder shouldn't emit a packet after a gap if PartitionHeadChecker doesn't assume it head",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 5,
-                    marker: true,
+            #[rustfmt::skip]
+            message: "Sample builder shouldn't emit a packet after a gap if PartitionHeadChecker doesn't assume it head".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 5,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5007,
-                    timestamp: 6,
-                    marker: true,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5007,
+                        timestamp: 6,
+                        marker: true,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5008,
-                    timestamp: 7,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5008,
+                        timestamp: 7,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            }]),
+            ],
             with_head_checker: true,
-            head_bytes: Vec::from([]),
-            samples: Vec::from([]),
+            head_bytes: vec![],
+            samples: vec![],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder should emit multiple valid packets",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 1,
+            #[rustfmt::skip]
+            message: "Sample builder should emit multiple valid packets".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 1,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5001,
-                    timestamp: 2,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5001,
+                        timestamp: 2,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5002,
-                    timestamp: 3,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5002,
+                        timestamp: 3,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fourth packet
-                header: rtp::header::Header {
-                    sequence_number: 5003,
-                    timestamp: 4,
+                Packet {
+                    // Fourth packet
+                    header: Header {
+                        sequence_number: 5003,
+                        timestamp: 4,
+                        ..Default::default()
+                    },
+                    payload: bytes!(4u8),
                     ..Default::default()
                 },
-                payload: bytes!(4u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fifth packet
-                header: rtp::header::Header {
-                    sequence_number: 5004,
-                    timestamp: 5,
+                Packet {
+                    // Fifth packet
+                    header: Header {
+                        sequence_number: 5004,
+                        timestamp: 5,
+                        ..Default::default()
+                    },
+                    payload: bytes!(5u8),
                     ..Default::default()
                 },
-                payload: bytes!(5u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Sixth packet
-                header: rtp::header::Header {
-                    sequence_number: 5005,
-                    timestamp: 6,
+                Packet {
+                    // Sixth packet
+                    header: Header {
+                        sequence_number: 5005,
+                        timestamp: 6,
+                        ..Default::default()
+                    },
+                    payload: bytes!(6u8),
                     ..Default::default()
                 },
-                payload: bytes!(6u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([Sample { // First sample
-                data: bytes!(1u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 1,
-                ..Default::default()
-            },
-            Sample { // Second sample
-                data: bytes!(2u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 2,
-                ..Default::default()
-            },
-            Sample { // Third sample
-                data: bytes!(3u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 3,
-                ..Default::default()
-            },
-            Sample { // Fourth sample
-                data: bytes!(4u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 4,
-                ..Default::default()
-            },
-            Sample { // Fifth sample
-                data: bytes!(5u8),
-                duration: Duration::from_secs(1),
-                packet_timestamp: 5,
-                ..Default::default()
-            },]),
+            ],
+            samples: vec![
+                Sample {
+                    // First sample
+                    data: bytes!(1u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 1,
+                    ..Default::default()
+                },
+                Sample {
+                    // Second sample
+                    data: bytes!(2u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 2,
+                    ..Default::default()
+                },
+                Sample {
+                    // Third sample
+                    data: bytes!(3u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 3,
+                    ..Default::default()
+                },
+                Sample {
+                    // Fourth sample
+                    data: bytes!(4u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 4,
+                    ..Default::default()
+                },
+                Sample {
+                    // Fifth sample
+                    data: bytes!(5u8),
+                    duration: Duration::from_secs(1),
+                    packet_timestamp: 5,
+                    ..Default::default()
+                },
+            ],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
             ..Default::default()
         },
         SampleBuilderTest {
-            message: String::from(
-                "Sample builder should skipt time stamps too old",
-            ),
-            packets: Vec::<rtp::packet::Packet>::from([rtp::packet::Packet { // First packet
-                header: rtp::header::Header {
-                    sequence_number: 5000,
-                    timestamp: 1,
+            #[rustfmt::skip]
+            message: "Sample builder should skipt time stamps too old".into(),
+            packets: vec![
+                Packet {
+                    // First packet
+                    header: Header {
+                        sequence_number: 5000,
+                        timestamp: 1,
+                        ..Default::default()
+                    },
+                    payload: bytes!(1u8),
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Second packet
-                header: rtp::header::Header {
-                    sequence_number: 5001,
-                    timestamp: 2,
+                Packet {
+                    // Second packet
+                    header: Header {
+                        sequence_number: 5001,
+                        timestamp: 2,
+                        ..Default::default()
+                    },
+                    payload: bytes!(2u8),
                     ..Default::default()
                 },
-                payload: bytes!(2u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Third packet
-                header: rtp::header::Header {
-                    sequence_number: 5002,
-                    timestamp: 3,
+                Packet {
+                    // Third packet
+                    header: Header {
+                        sequence_number: 5002,
+                        timestamp: 3,
+                        ..Default::default()
+                    },
+                    payload: bytes!(3u8),
                     ..Default::default()
                 },
-                payload: bytes!(3u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fourth packet
-                header: rtp::header::Header {
-                    sequence_number: 5013,
-                    timestamp: 4000,
+                Packet {
+                    // Fourth packet
+                    header: Header {
+                        sequence_number: 5013,
+                        timestamp: 4000,
+                        ..Default::default()
+                    },
+                    payload: bytes!(4u8),
                     ..Default::default()
                 },
-                payload: bytes!(4u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Fifth packet
-                header: rtp::header::Header {
-                    sequence_number: 5014,
-                    timestamp: 4000,
+                Packet {
+                    // Fifth packet
+                    header: Header {
+                        sequence_number: 5014,
+                        timestamp: 4000,
+                        ..Default::default()
+                    },
+                    payload: bytes!(5u8),
                     ..Default::default()
                 },
-                payload: bytes!(5u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Sixth packet
-                header: rtp::header::Header {
-                    sequence_number: 5015,
-                    timestamp: 4002,
+                Packet {
+                    // Sixth packet
+                    header: Header {
+                        sequence_number: 5015,
+                        timestamp: 4002,
+                        ..Default::default()
+                    },
+                    payload: bytes!(6u8),
                     ..Default::default()
                 },
-                payload: bytes!(6u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Seventh packet
-                header: rtp::header::Header {
-                    sequence_number: 5016,
-                    timestamp: 7000,
+                Packet {
+                    // Seventh packet
+                    header: Header {
+                        sequence_number: 5016,
+                        timestamp: 7000,
+                        ..Default::default()
+                    },
+                    payload: bytes!(4u8),
                     ..Default::default()
                 },
-                payload: bytes!(4u8),
-                ..Default::default()
-            },
-            rtp::packet::Packet { // Eigth packet
-                header: rtp::header::Header {
-                    sequence_number: 5017,
-                    timestamp: 7001,
+                Packet {
+                    // Eigth packet
+                    header: Header {
+                        sequence_number: 5017,
+                        timestamp: 7001,
+                        ..Default::default()
+                    },
+                    payload: bytes!(5u8),
                     ..Default::default()
                 },
-                payload: bytes!(5u8),
-                ..Default::default()
-            }]),
-            samples: Vec::from([Sample { // First sample
+            ],
+            samples: vec![Sample {
+                // First sample
                 data: bytes!(4u8, 5u8),
                 duration: Duration::from_secs(2),
                 packet_timestamp: 4000,
                 prev_dropped_packets: 13,
                 ..Default::default()
-            }]),
+            }],
             with_head_checker: true,
-            head_bytes: Vec::from([bytes!(4u8)]),
+            head_bytes: vec![bytes!(4u8)],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(2000),
             ..Default::default()
         },
-
-    ]);
+    ];
 
     for t in test_data {
         let d = FakeDepacketizer {
