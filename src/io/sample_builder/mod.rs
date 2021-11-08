@@ -104,8 +104,7 @@ impl<T: Depacketizer> SampleBuilder<T> {
             return false;
         }
 
-        return timestamp_distance(found_head.unwrap(), found_tail.unwrap())
-            > self.max_late_timestamp;
+        return found_tail.unwrap() - found_head.unwrap() > self.max_late_timestamp;
     }
 
     /// Returns the timestamp associated with a given sample location
@@ -142,11 +141,11 @@ impl<T: Depacketizer> SampleBuilder<T> {
         match consume.compare(self.filled.head) {
             Comparison::Inside if force_consume => {
                 self.release_packet(self.filled.head);
-                self.filled.head += 1;
+                self.filled.head = self.filled.head.wrapping_add(1);
             }
             Comparison::Before => {
                 self.release_packet(self.filled.head);
-                self.filled.head += 1;
+                self.filled.head = self.filled.head.wrapping_add(1);
             }
             _ => {}
         }
@@ -344,21 +343,19 @@ impl<T: Depacketizer> SampleBuilder<T> {
 }
 
 /// Computes the distance between two sequence numbers
-pub(crate) fn seqnum_distance(x: u16, y: u16) -> u16 {
-    let diff = x as i32 - y as i32;
-    if diff < 0 {
-        (-diff) as u16
+/*pub(crate) fn seqnum_distance(head: u16, tail: u16) -> u16 {
+    if head > tail {
+        head.wrapping_add(tail)
     } else {
-        diff as u16
+        tail - head
     }
-}
+}*/
 
-/// Computes the distance between two timestamps
-pub(crate) fn timestamp_distance(x: u32, y: u32) -> u32 {
-    let diff = x as i64 - y as i64;
-    if diff < 0 {
-        (-diff) as u32
+pub(crate) fn seqnum_distance(x: u16, y: u16) -> u16 {
+    let diff = x.wrapping_sub(y);
+    if diff > 0xFFFF / 2 {
+        0xFFFF - diff + 1
     } else {
-        diff as u32
+        diff
     }
 }

@@ -25,6 +25,15 @@ pub struct FakeDepacketizer {
     head_bytes: Vec<bytes::Bytes>,
 }
 
+impl FakeDepacketizer {
+    fn new() -> Self {
+        Self {
+            head_checker: false,
+            head_bytes: vec![],
+        }
+    }
+}
+
 impl Depacketizer for FakeDepacketizer {
     fn depacketize(&mut self, b: &Bytes) -> std::result::Result<bytes::Bytes, rtp::Error> {
         Ok(b.clone())
@@ -54,7 +63,6 @@ impl Depacketizer for FakeDepacketizer {
     }
 }
 
-// .go uses testing.T as parameter, have to look into that
 #[test]
 pub fn test_sample_builder() {
     let test_data: Vec<SampleBuilderTest> = vec![
@@ -67,7 +75,7 @@ pub fn test_sample_builder() {
                     timestamp: 5,
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
+                payload: bytes!(1),
                 ..Default::default()
             }],
             samples: vec![],
@@ -85,7 +93,7 @@ pub fn test_sample_builder() {
                     marker: true,
                     ..Default::default()
                 },
-                payload: bytes!(1u8),
+                payload: bytes!(1),
                 ..Default::default()
             }],
             samples: vec![],
@@ -104,7 +112,7 @@ pub fn test_sample_builder() {
                         timestamp: 5,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -114,7 +122,7 @@ pub fn test_sample_builder() {
                         timestamp: 6,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -124,21 +132,21 @@ pub fn test_sample_builder() {
                         timestamp: 7,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
             ],
             samples: vec![
                 Sample {
                     // First sample
-                    data: bytes!(1u8),
+                    data: bytes!(1),
                     duration: Duration::from_secs(1), // technically this is the default value, but since it was in .go source....
                     packet_timestamp: 5,
                     ..Default::default()
                 },
                 Sample {
                     // Second sample
-                    data: bytes!(2u8),
+                    data: bytes!(2),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 6,
                     ..Default::default()
@@ -160,7 +168,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -170,7 +178,7 @@ pub fn test_sample_builder() {
                         timestamp: 7,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -180,7 +188,7 @@ pub fn test_sample_builder() {
                         timestamp: 9,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
                 Packet {
@@ -190,7 +198,7 @@ pub fn test_sample_builder() {
                         timestamp: 11,
                         ..Default::default()
                     },
-                    payload: bytes!(4u8),
+                    payload: bytes!(4),
                     ..Default::default()
                 },
                 Packet {
@@ -200,7 +208,7 @@ pub fn test_sample_builder() {
                         timestamp: 13,
                         ..Default::default()
                     },
-                    payload: bytes!(5u8),
+                    payload: bytes!(5),
                     ..Default::default()
                 },
                 Packet {
@@ -210,7 +218,7 @@ pub fn test_sample_builder() {
                         timestamp: 15,
                         ..Default::default()
                     },
-                    payload: bytes!(6u8),
+                    payload: bytes!(6),
                     ..Default::default()
                 },
                 Packet {
@@ -220,13 +228,13 @@ pub fn test_sample_builder() {
                         timestamp: 17,
                         ..Default::default()
                     },
-                    payload: bytes!(7u8),
+                    payload: bytes!(7),
                     ..Default::default()
                 },
             ],
             samples: vec![Sample {
                 // First sample
-                data: bytes!(1u8),
+                data: bytes!(1),
                 duration: Duration::from_secs(2),
                 packet_timestamp: 5,
                 ..Default::default()
@@ -246,7 +254,7 @@ pub fn test_sample_builder() {
                         timestamp: 5,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -256,7 +264,7 @@ pub fn test_sample_builder() {
                         timestamp: 7,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -266,7 +274,7 @@ pub fn test_sample_builder() {
                         timestamp: 9,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
                 Packet {
@@ -276,7 +284,7 @@ pub fn test_sample_builder() {
                         timestamp: 11,
                         ..Default::default()
                     },
-                    payload: bytes!(4u8),
+                    payload: bytes!(4),
                     ..Default::default()
                 },
                 Packet {
@@ -286,7 +294,7 @@ pub fn test_sample_builder() {
                         timestamp: 13,
                         ..Default::default()
                     },
-                    payload: bytes!(5u8),
+                    payload: bytes!(5),
                     ..Default::default()
                 },
                 Packet {
@@ -296,7 +304,7 @@ pub fn test_sample_builder() {
                         timestamp: 15,
                         ..Default::default()
                     },
-                    payload: bytes!(6u8),
+                    payload: bytes!(6),
                     ..Default::default()
                 },
                 Packet {
@@ -306,7 +314,7 @@ pub fn test_sample_builder() {
                         timestamp: 17,
                         ..Default::default()
                     },
-                    payload: bytes!(7u8),
+                    payload: bytes!(7),
                     ..Default::default()
                 },
             ],
@@ -327,7 +335,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -338,7 +346,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -348,7 +356,7 @@ pub fn test_sample_builder() {
                         timestamp: 9,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
                 Packet {
@@ -358,7 +366,7 @@ pub fn test_sample_builder() {
                         timestamp: 11,
                         ..Default::default()
                     },
-                    payload: bytes!(4u8),
+                    payload: bytes!(4),
                     ..Default::default()
                 },
                 Packet {
@@ -368,7 +376,7 @@ pub fn test_sample_builder() {
                         timestamp: 13,
                         ..Default::default()
                     },
-                    payload: bytes!(5u8),
+                    payload: bytes!(5),
                     ..Default::default()
                 },
                 Packet {
@@ -378,7 +386,7 @@ pub fn test_sample_builder() {
                         timestamp: 15,
                         ..Default::default()
                     },
-                    payload: bytes!(6u8),
+                    payload: bytes!(6),
                     ..Default::default()
                 },
                 Packet {
@@ -388,21 +396,21 @@ pub fn test_sample_builder() {
                         timestamp: 17,
                         ..Default::default()
                     },
-                    payload: bytes!(7u8),
+                    payload: bytes!(7),
                     ..Default::default()
                 },
             ],
             samples: vec![
                 Sample {
                     // First (dropped) sample
-                    data: bytes!(1u8),
+                    data: bytes!(1),
                     duration: Duration::from_secs(2),
                     packet_timestamp: 5,
                     ..Default::default()
                 },
                 Sample {
                     // First correct sample
-                    data: bytes!(2u8),
+                    data: bytes!(2),
                     duration: Duration::from_secs(2),
                     packet_timestamp: 7,
                     prev_dropped_packets: 1,
@@ -422,10 +430,9 @@ pub fn test_sample_builder() {
                     header: Header {
                         sequence_number: 5000,
                         timestamp: 5,
-                        marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -433,10 +440,9 @@ pub fn test_sample_builder() {
                     header: Header {
                         sequence_number: 5001,
                         timestamp: 6,
-                        marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -446,7 +452,7 @@ pub fn test_sample_builder() {
                         timestamp: 6,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
                 Packet {
@@ -456,21 +462,21 @@ pub fn test_sample_builder() {
                         timestamp: 7,
                         ..Default::default()
                     },
-                    payload: bytes!(4u8),
+                    payload: bytes!(4),
                     ..Default::default()
                 },
             ],
             samples: vec![
                 Sample {
                     // First sample
-                    data: bytes!(1u8),
+                    data: bytes!(1),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 5,
                     ..Default::default()
                 },
                 Sample {
                     // Second (duplicate) correct sample
-                    data: bytes!(2u8, 2u8),
+                    data: bytes!(2, 3),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 6,
                     ..Default::default()
@@ -492,7 +498,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -503,7 +509,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -513,7 +519,7 @@ pub fn test_sample_builder() {
                         timestamp: 7,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
             ],
@@ -534,7 +540,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -545,7 +551,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -555,12 +561,12 @@ pub fn test_sample_builder() {
                         timestamp: 7,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
             ],
             with_head_checker: true,
-            head_bytes: vec![bytes!(2u8)],
+            head_bytes: vec![bytes!(2)],
             samples: vec![],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(0),
@@ -578,7 +584,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -589,7 +595,7 @@ pub fn test_sample_builder() {
                         marker: true,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -599,7 +605,7 @@ pub fn test_sample_builder() {
                         timestamp: 7,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
             ],
@@ -621,7 +627,7 @@ pub fn test_sample_builder() {
                         timestamp: 1,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -631,7 +637,7 @@ pub fn test_sample_builder() {
                         timestamp: 2,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -641,7 +647,7 @@ pub fn test_sample_builder() {
                         timestamp: 3,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
                 Packet {
@@ -651,7 +657,7 @@ pub fn test_sample_builder() {
                         timestamp: 4,
                         ..Default::default()
                     },
-                    payload: bytes!(4u8),
+                    payload: bytes!(4),
                     ..Default::default()
                 },
                 Packet {
@@ -661,7 +667,7 @@ pub fn test_sample_builder() {
                         timestamp: 5,
                         ..Default::default()
                     },
-                    payload: bytes!(5u8),
+                    payload: bytes!(5),
                     ..Default::default()
                 },
                 Packet {
@@ -671,42 +677,42 @@ pub fn test_sample_builder() {
                         timestamp: 6,
                         ..Default::default()
                     },
-                    payload: bytes!(6u8),
+                    payload: bytes!(6),
                     ..Default::default()
                 },
             ],
             samples: vec![
                 Sample {
                     // First sample
-                    data: bytes!(1u8),
+                    data: bytes!(1),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 1,
                     ..Default::default()
                 },
                 Sample {
                     // Second sample
-                    data: bytes!(2u8),
+                    data: bytes!(2),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 2,
                     ..Default::default()
                 },
                 Sample {
                     // Third sample
-                    data: bytes!(3u8),
+                    data: bytes!(3),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 3,
                     ..Default::default()
                 },
                 Sample {
                     // Fourth sample
-                    data: bytes!(4u8),
+                    data: bytes!(4),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 4,
                     ..Default::default()
                 },
                 Sample {
                     // Fifth sample
-                    data: bytes!(5u8),
+                    data: bytes!(5),
                     duration: Duration::from_secs(1),
                     packet_timestamp: 5,
                     ..Default::default()
@@ -727,7 +733,7 @@ pub fn test_sample_builder() {
                         timestamp: 1,
                         ..Default::default()
                     },
-                    payload: bytes!(1u8),
+                    payload: bytes!(1),
                     ..Default::default()
                 },
                 Packet {
@@ -737,7 +743,7 @@ pub fn test_sample_builder() {
                         timestamp: 2,
                         ..Default::default()
                     },
-                    payload: bytes!(2u8),
+                    payload: bytes!(2),
                     ..Default::default()
                 },
                 Packet {
@@ -747,7 +753,7 @@ pub fn test_sample_builder() {
                         timestamp: 3,
                         ..Default::default()
                     },
-                    payload: bytes!(3u8),
+                    payload: bytes!(3),
                     ..Default::default()
                 },
                 Packet {
@@ -757,7 +763,7 @@ pub fn test_sample_builder() {
                         timestamp: 4000,
                         ..Default::default()
                     },
-                    payload: bytes!(4u8),
+                    payload: bytes!(4),
                     ..Default::default()
                 },
                 Packet {
@@ -767,7 +773,7 @@ pub fn test_sample_builder() {
                         timestamp: 4000,
                         ..Default::default()
                     },
-                    payload: bytes!(5u8),
+                    payload: bytes!(5),
                     ..Default::default()
                 },
                 Packet {
@@ -777,7 +783,7 @@ pub fn test_sample_builder() {
                         timestamp: 4002,
                         ..Default::default()
                     },
-                    payload: bytes!(6u8),
+                    payload: bytes!(6),
                     ..Default::default()
                 },
                 Packet {
@@ -787,7 +793,7 @@ pub fn test_sample_builder() {
                         timestamp: 7000,
                         ..Default::default()
                     },
-                    payload: bytes!(4u8),
+                    payload: bytes!(4),
                     ..Default::default()
                 },
                 Packet {
@@ -797,20 +803,20 @@ pub fn test_sample_builder() {
                         timestamp: 7001,
                         ..Default::default()
                     },
-                    payload: bytes!(5u8),
+                    payload: bytes!(5),
                     ..Default::default()
                 },
             ],
             samples: vec![Sample {
                 // First sample
-                data: bytes!(4u8, 5u8),
+                data: bytes!(4, 5),
                 duration: Duration::from_secs(2),
                 packet_timestamp: 4000,
                 prev_dropped_packets: 13,
                 ..Default::default()
             }],
             with_head_checker: true,
-            head_bytes: vec![bytes!(4u8)],
+            head_bytes: vec![bytes!(4)],
             max_late: 50,
             max_late_timestamp: Duration::from_secs(2000),
             ..Default::default()
@@ -851,14 +857,7 @@ pub fn test_sample_builder() {
 // SampleBuilder should respect maxLate if we popped successfully but then have a gap larger then maxLate
 #[test]
 fn test_sample_builder_max_late() {
-    let mut s = SampleBuilder::new(
-        50,
-        FakeDepacketizer {
-            head_bytes: vec![],
-            head_checker: false,
-        },
-        1,
-    );
+    let mut s = SampleBuilder::new(50, FakeDepacketizer::new(), 1);
 
     s.push(Packet {
         header: Header {
@@ -961,4 +960,169 @@ fn test_sample_builder_max_late() {
         s.pop(),
         "Failed to build samples after large gap"
     );
+}
+
+#[test]
+fn test_seqnum_distance() {
+    struct TestData {
+        x: u16,
+        y: u16,
+        d: u16,
+    }
+    let test_data = vec![
+        TestData {
+            x: 0x0001,
+            y: 0x0003,
+            d: 0x0002,
+        },
+        TestData {
+            x: 0x0003,
+            y: 0x0001,
+            d: 0x0002,
+        },
+        TestData {
+            x: 0xFFF3,
+            y: 0xFFF1,
+            d: 0x0002,
+        },
+        TestData {
+            x: 0xFFF1,
+            y: 0xFFF3,
+            d: 0x0002,
+        },
+        TestData {
+            x: 0xFFFF,
+            y: 0x0001,
+            d: 0x0002,
+        },
+        TestData {
+            x: 0x0001,
+            y: 0xFFFF,
+            d: 0x0002,
+        },
+    ];
+
+    for data in test_data {
+        assert_eq!(
+            seqnum_distance(data.x, data.y),
+            data.d,
+            "seqnum_distance({}, {}) returned {} which must be {}",
+            data.x,
+            data.y,
+            seqnum_distance(data.x, data.y),
+            data.d
+        );
+    }
+}
+
+#[test]
+fn test_sample_builder_clean_reference() {
+    for seq_start in [0 as u16, 0xfff8, 0xfffe] {
+        let mut s = SampleBuilder::new(10, FakeDepacketizer::new(), 1);
+        s.push(Packet {
+            header: Header {
+                sequence_number: seq_start,
+                timestamp: 0,
+                ..Default::default()
+            },
+            payload: bytes!(0x01),
+        });
+        s.push(Packet {
+            header: Header {
+                sequence_number: seq_start.wrapping_add(1),
+                timestamp: 0,
+                ..Default::default()
+            },
+            payload: bytes!(0x02),
+        });
+        s.push(Packet {
+            header: Header {
+                sequence_number: seq_start.wrapping_add(2),
+                timestamp: 0,
+                ..Default::default()
+            },
+            payload: bytes!(0x03),
+        });
+        let pkt4 = Packet {
+            header: Header {
+                sequence_number: seq_start.wrapping_add(14),
+                timestamp: 120,
+                ..Default::default()
+            },
+            payload: bytes!(0x04),
+        };
+        s.push(pkt4.clone());
+        let pkt5 = Packet {
+            header: Header {
+                sequence_number: seq_start.wrapping_add(12),
+                timestamp: 120,
+                ..Default::default()
+            },
+            payload: bytes!(0x05),
+        };
+        s.push(pkt5.clone());
+
+        for i in 0..3 {
+            assert_eq!(
+                None,
+                s.buffer[seq_start.wrapping_add(i) as usize],
+                "Old packet ({}) is not unreferenced (seq_start: {}, max_late: 10, pushed: 12)",
+                i,
+                seq_start
+            );
+        }
+        assert_eq!(Some(pkt4), s.buffer[seq_start.wrapping_add(14) as usize]);
+        assert_eq!(Some(pkt5), s.buffer[seq_start.wrapping_add(12) as usize]);
+    }
+}
+
+#[test]
+fn test_sample_builder_push_max_zero() {
+    let pkts = vec![Packet {
+        header: Header {
+            sequence_number: 0,
+            timestamp: 0,
+            marker: true,
+            ..Default::default()
+        },
+        payload: bytes!(0x01),
+    }];
+    let d = FakeDepacketizer {
+        head_checker: true,
+        head_bytes: vec![bytes!(0x01)],
+    };
+    let mut s = SampleBuilder::new(0, d, 1);
+    s.push(pkts[0].clone());
+    assert_eq!(s.pop().is_some(), true, "Should expect a popped sample.")
+}
+
+#[test]
+fn test_pop_with_timestamp() {
+    let mut s = SampleBuilder::new(0, FakeDepacketizer::new(), 1);
+    assert_eq!(None, s.pop_with_timestamp());
+}
+
+#[test]
+fn test_sample_builder_data() {
+    let mut s = SampleBuilder::new(10, FakeDepacketizer::new(), 1);
+    let mut j: usize = 0;
+    for i in 0..0x20000 as usize {
+        let p = Packet {
+            header: Header {
+                sequence_number: i as u16,
+                timestamp: (i + 42) as u32,
+                ..Default::default()
+            },
+            payload: Bytes::copy_from_slice(&[i as u8]),
+        };
+        s.push(p);
+        while let Some((sample, ts)) = s.pop_with_timestamp() {
+            assert_eq!(ts, (j + 42) as u32, "timestamp");
+            assert_eq!(sample.data.len(), 1, "data length");
+            assert_eq!(j as u8, sample.data[0], "timestamp");
+            j += 1;
+        }
+    }
+    // only the last packet should be dropped
+    assert_eq!(j, 0x1FFFF);
 }
