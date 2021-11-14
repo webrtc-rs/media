@@ -1,11 +1,7 @@
-pub mod h264_reader;
-pub mod h264_writer;
-use crate::error::Result;
+pub mod audio;
+pub mod video;
 
-pub mod ivf_reader;
-pub mod ivf_writer;
-pub mod ogg_reader;
-pub mod ogg_writer;
+use crate::error::Result;
 
 pub type ResetFn<R> = Box<dyn FnMut(usize) -> R>;
 

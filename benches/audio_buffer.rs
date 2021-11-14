@@ -1,6 +1,6 @@
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use webrtc_media::audio::buffer::{
+use webrtc_media::codec::audio::buffer::{
     layout::{Deinterleaved, Interleaved},
     Buffer,
 };

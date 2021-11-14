@@ -2,7 +2,7 @@
 mod ivf_writer_test;
 
 use crate::error::Result;
-use crate::io::ivf_reader::IVFFileHeader;
+use crate::io::video::ivf_reader::IVFFileHeader;
 use crate::io::Writer;
 
 use byteorder::{LittleEndian, WriteBytesExt};

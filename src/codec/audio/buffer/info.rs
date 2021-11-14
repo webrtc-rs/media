@@ -1,6 +1,6 @@
 use std::marker::PhantomData;
 
-use crate::audio::buffer::layout::{Deinterleaved, Interleaved};
+use crate::codec::audio::buffer::layout::{Deinterleaved, Interleaved};
 
 #[derive(Eq, PartialEq, Debug)]
 pub struct BufferInfo<L> {
