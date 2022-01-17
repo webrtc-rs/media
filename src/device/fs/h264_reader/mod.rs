@@ -9,6 +9,7 @@ use std::io::Read;
 
 /// NalUnitType is the type of a NAL
 /// Enums for NalUnitTypes
+#[allow(clippy::upper_case_acronyms)]
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub enum NalUnitType {
     /// Unspecified
@@ -102,6 +103,7 @@ impl From<u8> for NalUnitType {
 }
 
 /// NAL H.264 Network Abstraction Layer
+#[allow(clippy::upper_case_acronyms)]
 pub struct NAL {
     pub picture_order_count: u32,
 

@@ -2,9 +2,9 @@
 #![allow(dead_code)]
 
 pub mod codec;
-mod error;
-pub mod io;
+pub mod device;
 pub mod sample;
 pub mod track;
 
+mod error;
 pub use error::Error;

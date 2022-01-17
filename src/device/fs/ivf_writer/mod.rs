@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod ivf_writer_test;
 
+use crate::device::fs::ivf_reader::IVFFileHeader;
+use crate::device::Writer;
 use crate::error::Result;
-use crate::io::video::ivf_reader::IVFFileHeader;
-use crate::io::Writer;
 
 use byteorder::{LittleEndian, WriteBytesExt};
 use bytes::{Bytes, BytesMut};

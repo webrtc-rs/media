@@ -1,5 +1,6 @@
-pub mod audio;
-pub mod video;
+pub mod capture;
+pub mod fs;
+pub mod render;
 
 use crate::error::Result;
 

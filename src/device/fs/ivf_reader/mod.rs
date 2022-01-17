@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod ivf_reader_test;
 
+use crate::device::ResetFn;
 use crate::error::{Error, Result};
-use crate::io::ResetFn;
 
 use byteorder::{LittleEndian, ReadBytesExt};
 use bytes::BytesMut;

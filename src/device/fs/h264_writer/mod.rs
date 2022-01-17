@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod h264_writer_test;
 
+use crate::device::Writer;
 use crate::error::Result;
-use crate::io::Writer;
 
 use rtp::codecs::h264::H264Packet;
 use rtp::packetizer::Depacketizer;

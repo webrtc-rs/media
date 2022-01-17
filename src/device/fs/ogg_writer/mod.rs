@@ -1,9 +1,9 @@
 #[cfg(test)]
 mod ogg_writer_test;
 
+use crate::device::fs::ogg_reader::*;
+use crate::device::Writer;
 use crate::error::Result;
-use crate::io::audio::ogg_reader::*;
-use crate::io::Writer;
 
 use byteorder::{LittleEndian, WriteBytesExt};
 use bytes::Bytes;
