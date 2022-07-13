@@ -45,7 +45,7 @@ pub struct SampleBuilder<T: Depacketizer> {
 impl<T: Depacketizer> SampleBuilder<T> {
     /// Constructs a new SampleBuilder.
     /// `max_late` is how long to wait until we can construct a completed [`Sample`].
-    /// max_late is measured in RTP packet sequence numbers.
+    /// `max_late` is measured in RTP packet sequence numbers.
     /// A large max_late will result in less packet loss but higher latency.
     /// The depacketizer extracts media samples from RTP packets.
     /// Several depacketizers are available in package [github.com/pion/rtp/codecs](https://github.com/webrtc-rs/rtp/tree/main/src/codecs).
