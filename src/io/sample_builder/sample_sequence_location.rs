@@ -13,7 +13,7 @@ pub(crate) struct SampleSequenceLocation {
     /// head is the first packet in a sequence
     pub(crate) head: u16,
     /// tail is always set to one after the final sequence number,
-    /// so if head == tail then the sequence is empty
+    /// so if `head == tail` then the sequence is empty
     pub(crate) tail: u16,
 }
 

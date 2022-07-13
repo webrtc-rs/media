@@ -44,11 +44,11 @@ pub struct SampleBuilder<T: Depacketizer> {
 
 impl<T: Depacketizer> SampleBuilder<T> {
     /// Constructs a new SampleBuilder.
-    /// max_late is how long to wait until we can construct a completed media.Sample.
+    /// `max_late` is how long to wait until we can construct a completed [`Sample`].
     /// max_late is measured in RTP packet sequence numbers.
     /// A large max_late will result in less packet loss but higher latency.
     /// The depacketizer extracts media samples from RTP packets.
-    /// Several depacketizers are available in package github.com/pion/rtp/codecs.
+    /// Several depacketizers are available in package [github.com/pion/rtp/codecs](https://github.com/webrtc-rs/rtp/tree/main/src/codecs).
     pub fn new(max_late: u16, depacketizer: T, sample_rate: u32) -> Self {
         Self {
             max_late,
@@ -330,7 +330,7 @@ impl<T: Depacketizer> SampleBuilder<T> {
     }
 
     /// Compiles pushed RTP packets into media samples and then
-    /// returns the next valid sample with its associated RTP timestamp (or None if
+    /// returns the next valid sample with its associated RTP timestamp (or `None` if
     /// no sample is compiled).
     pub fn pop_with_timestamp(&mut self) -> Option<(Sample, u32)> {
         if let Some(sample) = self.pop() {
